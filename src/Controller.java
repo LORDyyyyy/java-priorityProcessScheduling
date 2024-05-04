@@ -218,7 +218,7 @@ public class Controller implements Initializable {
 
     @FXML
     public void genGanttChartAction(ActionEvent e) {
-        String imagePath = "/home/lordy/Pictures/327 16:9.png";
+        String imagePath = "/home/lordy/Pictures/2024-01-02_10-54.png";
 
         Image image = new Image(new File(imagePath).toURI().toString());
         ImageView imageView = new ImageView(image);
