@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<SplitPane dividerPositions="0.3113522537562604" prefHeight="829.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
+   <items>
+      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="158.0" prefWidth="334.0">
+         <children>
+            <AnchorPane prefHeight="800.0" prefWidth="354.0">
+               <children>
+                  <Label alignment="CENTER" layoutX="29.0" layoutY="61.0" prefHeight="18.0" prefWidth="270.0" text="Enter No. of processes" textFill="#5225ab">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="noOfProField" layoutX="29.0" layoutY="96.0" prefHeight="31.0" prefWidth="195.0" promptText="Here" />
+                  <Button fx:id="noOfProBtn" layoutX="238.0" layoutY="97.0" mnemonicParsing="false" onAction="#noOfProBtnOnAction" prefHeight="30.0" prefWidth="74.0" style="-fx-background-color: #5225ab;" styleClass="primary" text="Submit" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <TableView fx:id="proDataInputTable" layoutX="17.0" layoutY="192.0" prefHeight="384.0" prefWidth="320.0" />
+                  <Label fx:id="noOfProVal" layoutX="29.0" layoutY="139.0" textFill="#f80303" />
+                  <Button fx:id="submitTableData" layoutX="29.0" layoutY="584.0" mnemonicParsing="false" onAction="#submitProcessData" prefHeight="37.0" prefWidth="120.0" style="-fx-background-color: #5225ab;" text="Calculate" textFill="WHITE">
+                     <font>
+                        <Font size="17.0" />
+                     </font>
+                  </Button>
+                  <Label fx:id="submitTableDataValidation" alignment="CENTER" layoutX="55.0" layoutY="628.0" prefHeight="20.0" prefWidth="244.0" textFill="#fc0000">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="addOneInputRow" layoutX="164.0" layoutY="590.0" mnemonicParsing="false" onAction="#addOneInputRowAction" text="Add Row" />
+                  <Button fx:id="delOneInputRow" layoutX="245.0" layoutY="590.0" mnemonicParsing="false" onAction="#delOneInputRowAction" text="Delete Row" />
+               </children>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
+      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+         <children>
+            <TableView fx:id="outputTable" layoutX="11.0" layoutY="65.0" prefHeight="400.0" prefWidth="800.0" />
+            <TableView fx:id="outputAvgTable" layoutX="11.0" layoutY="483.0" prefHeight="68.0" prefWidth="800.0" />
+            <Button fx:id="genGanttChartBtn" layoutX="20.0" layoutY="684.0" mnemonicParsing="false" onAction="#genGanttChartAction" prefHeight="37.0" prefWidth="176.0" style="-fx-background-color: #5225ab;" text="Generate Gantt Chart" textFill="WHITE">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Button>
+            <Button fx:id="clearOutputsBtn" layoutX="212.0" layoutY="684.0" mnemonicParsing="false" onAction="#clearOutputsAction" prefHeight="37.0" prefWidth="74.0" text="Clear">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="exitBtn" layoutX="303.0" layoutY="684.0" mnemonicParsing="false" onAction="#exitAction" prefHeight="37.0" prefWidth="74.0" text="Exit">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+         </children></AnchorPane>
+   </items>
+</SplitPane>
