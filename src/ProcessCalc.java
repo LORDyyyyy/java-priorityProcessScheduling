@@ -2,56 +2,66 @@ public class ProcessCalc {
 
     private int proNo;
 
-    private int ct;
-    private int tat;
-    private int wt;
-    private int rt;
+    private Integer st;
+    private Integer ct;
+    private Integer tat;
+    private Integer wt;
+    private Integer rt;
 
-    public ProcessCalc(int proNo) {
+    public ProcessCalc(Integer proNo) {
         this.proNo = proNo;
+        this.st = 0;
         this.ct = 0;
         this.tat = 0;
         this.wt = 0;
         this.rt = 0;
     }
 
-    public int getProNo() {
+    public Integer getProNo() {
         return proNo;
     }
 
-    public void setProNo(int proNo) {
+    public void setProNo(Integer proNo) {
         this.proNo = proNo;
     }
 
-    public int getCt() {
+    public Integer getSt() {
+        return st;
+    }
+
+    public void setSt(Integer st) {
+        this.st = st;
+    }
+
+    public Integer getCt() {
         return ct;
     }
 
-    public void setCt(int ct) {
+    public void setCt(Integer ct) {
         this.ct = ct;
     }
 
-    public int getTat() {
+    public Integer getTat() {
         return tat;
     }
 
-    public void setTat(int tat) {
+    public void setTat(Integer tat) {
         this.tat = tat;
     }
 
-    public int getWt() {
+    public Integer getWt() {
         return wt;
     }
 
-    public void setWt(int wt) {
+    public void setWt(Integer wt) {
         this.wt = wt;
     }
 
-    public int getRt() {
+    public Integer getRt() {
         return rt;
     }
 
-    public void setRt(int rt) {
+    public void setRt(Integer rt) {
         this.rt = rt;
     }
 }

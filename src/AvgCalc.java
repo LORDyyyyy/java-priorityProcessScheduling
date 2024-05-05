@@ -1,45 +1,45 @@
 public class AvgCalc {
-    private int ctAvg;
-    private int tatAvg;
-    private int wtAvg;
-    private int rtAvg;
+    private Double ctAvg;
+    private Double tatAvg;
+    private Double wtAvg;
+    private Double rtAvg;
 
     public AvgCalc() {
-        this.ctAvg = 0;
-        this.tatAvg = 0;
-        this.wtAvg = 0;
-        this.rtAvg = 0;
+        this.ctAvg = 0.0;
+        this.tatAvg = 0.0;
+        this.wtAvg = 0.0;
+        this.rtAvg = 0.0;
     }
 
-    public int getCt() {
+    public Double getCt() {
         return ctAvg;
     }
 
-    public void setCt(int ctAvg) {
+    public void setCt(Double ctAvg) {
         this.ctAvg = ctAvg;
     }
 
-    public int getTat() {
+    public Double getTat() {
         return tatAvg;
     }
 
-    public void setTat(int tatAvg) {
+    public void setTat(Double tatAvg) {
         this.tatAvg = tatAvg;
     }
 
-    public int getWt() {
+    public Double getWt() {
         return wtAvg;
     }
 
-    public void setWt(int wt) {
+    public void setWt(Double wt) {
         this.wtAvg = wt;
     }
 
-    public int getRt() {
+    public Double getRt() {
         return rtAvg;
     }
 
-    public void setRt(int rt) {
+    public void setRt(Double rt) {
         this.rtAvg = rt;
     }
 }

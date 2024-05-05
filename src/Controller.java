@@ -1,5 +1,7 @@
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import javafx.animation.KeyFrame;
@@ -55,7 +57,7 @@ public class Controller implements Initializable {
     private Button exitBtn;
 
     @FXML
-    private TableView<Process> proDataInputTable;
+    private TableView<ProcessFields> proDataInputTable;
     @FXML
     private TableView<ProcessCalc> outputTable;
     @FXML
@@ -80,29 +82,68 @@ public class Controller implements Initializable {
 
     public void addInputTableFields(int noOfPro) {
 
-        final ObservableList<Process> data = FXCollections.observableArrayList();
+        final ObservableList<ProcessFields> data = FXCollections.observableArrayList();
 
         for (int i = 0; i < noOfPro; i++)
-            data.add(new Process("", "", "", i + 1));
+            data.add(new ProcessFields("", "", "", i + 1));
 
         proDataInputTable.setItems(data);
     }
 
     public void addClaculationTableFields(int noOfPro) {
-
         final ObservableList<ProcessCalc> data = FXCollections.observableArrayList();
+        PriorityScheduling.totalprocess = noOfPro;
+        PriorityScheduling.initprocess();
 
-        for (int i = 0; i < noOfPro; i++)
+        for (int i = 0; i < noOfPro; i++) {
+            PriorityScheduling.proc[i] = new PriorityScheduling().new Process(i + 1,
+                    Integer.parseInt(proDataInputTable.getItems().get(i).getArrivalTime().getText()),
+                    Integer.parseInt(proDataInputTable.getItems().get(i).getBurstTime().getText()),
+                    Integer.parseInt(proDataInputTable.getItems().get(i).getPriority().getText()));
+        }
+
+        ArrayList<Object[]> results = PriorityScheduling.findgc();
+
+        for (int i = 0; i < noOfPro; i++) {
             data.add(new ProcessCalc(i + 1));
+            data.get(i).setProNo((Integer) results.get(0)[i]);
+            data.get(i).setCt((Integer) results.get(1)[i]);
+            data.get(i).setTat((Integer) results.get(2)[i]);
+            data.get(i).setWt((Integer) results.get(3)[i]);
+            data.get(i).setRt((Integer) results.get(4)[i]);
+            data.get(i).setSt((Integer) results.get(5)[i]);
+        }
+
+        for (Object[] arr : results) {
+            System.out.println(Arrays.toString(arr));
+        }
+
+        System.out.println("--------------------");
+
+        for (int i = 0; i < noOfPro; i++) {
+            // data.get(i).setCt((Integer) results.get(i)[1]);
+            // data.get(i).setTat((Integer) results.get(i)[2]);
+            // data.get(i).setWt((Integer) results.get(i)[3]);
+            // data.get(i).setRt((Integer) results.get(i)[4]);
+            // System.out.println(results.get(i));
+            // System.out.println(proDataInputTable.getItems().get(i));
+            System.out.println(data.get(i).toString());
+        }
 
         outputTable.setItems(data);
+
+        this.addAvgClaculationTableFields(results);
     }
 
-    public void addAvgClaculationTableFields() {
+    public void addAvgClaculationTableFields(ArrayList<Object[]> result) {
 
         final ObservableList<AvgCalc> data = FXCollections.observableArrayList();
 
         data.add(new AvgCalc());
+        data.get(0).setWt((Double) result.get(6)[0]);
+        data.get(0).setTat((Double) result.get(6)[1]);
+        data.get(0).setCt((Double) result.get(6)[2]);
+        data.get(0).setRt((Double) result.get(6)[3]);
 
         outputAvgTable.setItems(data);
     }
@@ -111,7 +152,7 @@ public class Controller implements Initializable {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void initialize(URL arg0, ResourceBundle arg1) {
         TableColumn proColumn = new TableColumn("Process No.");
-        TableColumn priColumn = new TableColumn("priority");
+        TableColumn priColumn = new TableColumn("Priority");
         TableColumn atColumn = new TableColumn("AT");
         TableColumn btColumn = new TableColumn("BT");
 
@@ -134,20 +175,23 @@ public class Controller implements Initializable {
         TableColumn tatColumn = new TableColumn("Turnaround Time");
         TableColumn wtColumn = new TableColumn("Waiting Time");
         TableColumn rtColumn = new TableColumn("Response Time");
+        TableColumn stColumn = new TableColumn("Start Time");
 
-        outputTable.getColumns().addAll(proColumnOut, ctColumn, tatColumn, wtColumn, rtColumn);
+        outputTable.getColumns().addAll(proColumnOut, stColumn, ctColumn, tatColumn, wtColumn, rtColumn);
 
         proColumnOut.setCellValueFactory(new PropertyValueFactory<ProcessCalc, Integer>("proNo"));
         ctColumn.setCellValueFactory(new PropertyValueFactory<ProcessCalc, Integer>("ct"));
         tatColumn.setCellValueFactory(new PropertyValueFactory<ProcessCalc, Integer>("tat"));
         wtColumn.setCellValueFactory(new PropertyValueFactory<ProcessCalc, Integer>("wt"));
         rtColumn.setCellValueFactory(new PropertyValueFactory<ProcessCalc, Integer>("rt"));
+        stColumn.setCellValueFactory(new PropertyValueFactory<ProcessCalc, Integer>("st"));
 
-        proColumnOut.setPrefWidth(160);
-        ctColumn.setPrefWidth(160);
-        tatColumn.setPrefWidth(160);
-        wtColumn.setPrefWidth(160);
-        rtColumn.setPrefWidth(160);
+        proColumnOut.setPrefWidth(133);
+        ctColumn.setPrefWidth(133);
+        tatColumn.setPrefWidth(133);
+        wtColumn.setPrefWidth(133);
+        rtColumn.setPrefWidth(133);
+        stColumn.setPrefWidth(133);
 
         /**********************************/
 
@@ -170,7 +214,7 @@ public class Controller implements Initializable {
 
         TableColumn[] cols = {
                 proColumn, priColumn, atColumn, btColumn,
-                proColumnOut, ctColumn, tatColumn, wtColumn, rtColumn,
+                proColumnOut, ctColumn, tatColumn, wtColumn, rtColumn, stColumn,
                 ctColumnAvg, tatColumnAvg, wtColumnAvg, rtColumnAvg
         };
 
@@ -183,7 +227,7 @@ public class Controller implements Initializable {
     public void submitProcessData(ActionEvent e) {
         boolean valid = true;
 
-        for (Process p : proDataInputTable.getItems()) {
+        for (ProcessFields p : proDataInputTable.getItems()) {
             if (!p.validate()) {
                 valid = false;
                 break;
@@ -198,12 +242,11 @@ public class Controller implements Initializable {
         this.labelTimeout(submitTableDataValidation, 3, "Process data submitted successfully!", Color.GREEN);
 
         this.addClaculationTableFields(noOfPro);
-        this.addAvgClaculationTableFields();
     }
 
     @FXML
     public void addOneInputRowAction(ActionEvent e) {
-        proDataInputTable.getItems().add(new Process("", "", "", this.noOfPro + 1));
+        proDataInputTable.getItems().add(new ProcessFields("", "", "", this.noOfPro + 1));
         this.noOfPro += 1;
     }
 

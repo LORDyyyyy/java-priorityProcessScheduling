@@ -1,12 +1,12 @@
 import javafx.scene.control.TextField;
 
-public class Process {
+public class ProcessFields {
     private int proNo;
     private TextField priority;
     private TextField arrivalTime;
     private TextField burstTime;
 
-    public Process(String priority, String arrivalTime, String burstTime, int proNo) {
+    public ProcessFields(String priority, String arrivalTime, String burstTime, int proNo) {
 
         this.proNo += 1;
 
@@ -22,8 +22,8 @@ public class Process {
 
     public boolean validate() {
         if (priority.getText().matches("^(?!0)\\d+$")
-                && arrivalTime.getText().matches("^(?!0)\\d+$")
-                && burstTime.getText().matches("^(?!0)\\d+$"))
+                && arrivalTime.getText().matches("^(0|[1-9]\\d*)$")
+                && burstTime.getText().matches("^(0|[1-9]\\d*)$"))
             return true;
         return false;
     }
