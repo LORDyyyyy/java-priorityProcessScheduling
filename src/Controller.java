@@ -1,7 +1,6 @@
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import javafx.animation.KeyFrame;
@@ -92,17 +91,17 @@ public class Controller implements Initializable {
 
     public void addClaculationTableFields(int noOfPro) {
         final ObservableList<ProcessCalc> data = FXCollections.observableArrayList();
-        PriorityScheduling.totalprocess = noOfPro;
-        PriorityScheduling.initprocess();
+        NonPriorityScheduling.totalprocess = noOfPro;
+        NonPriorityScheduling.initprocess();
 
         for (int i = 0; i < noOfPro; i++) {
-            PriorityScheduling.proc[i] = new PriorityScheduling().new Process(i + 1,
+            NonPriorityScheduling.proc[i] = new NonPriorityScheduling().new Process(i + 1,
                     Integer.parseInt(proDataInputTable.getItems().get(i).getArrivalTime().getText()),
                     Integer.parseInt(proDataInputTable.getItems().get(i).getBurstTime().getText()),
                     Integer.parseInt(proDataInputTable.getItems().get(i).getPriority().getText()));
         }
 
-        ArrayList<Object[]> results = PriorityScheduling.findgc();
+        ArrayList<Object[]> results = NonPriorityScheduling.calc_wt_rt_tat_st_ct();
 
         for (int i = 0; i < noOfPro; i++) {
             data.add(new ProcessCalc(i + 1));
