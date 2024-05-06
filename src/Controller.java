@@ -114,25 +114,10 @@ public class Controller implements Initializable {
             data.get(i).setSt((Integer) results.get(5)[i]);
         }
 
-        for (Object[] arr : results) {
-            System.out.println(Arrays.toString(arr));
-        }
-
-        System.out.println("--------------------");
-
-        for (int i = 0; i < noOfPro; i++) {
-            // data.get(i).setCt((Integer) results.get(i)[1]);
-            // data.get(i).setTat((Integer) results.get(i)[2]);
-            // data.get(i).setWt((Integer) results.get(i)[3]);
-            // data.get(i).setRt((Integer) results.get(i)[4]);
-            // System.out.println(results.get(i));
-            // System.out.println(proDataInputTable.getItems().get(i));
-            System.out.println(data.get(i).toString());
-        }
-
         outputTable.setItems(data);
 
         this.addAvgClaculationTableFields(results);
+
     }
 
     public void addAvgClaculationTableFields(ArrayList<Object[]> result) {
@@ -146,11 +131,16 @@ public class Controller implements Initializable {
         data.get(0).setRt((Double) result.get(6)[3]);
 
         outputAvgTable.setItems(data);
+
+        genGanttChartBtn.setDisable(false);
     }
 
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void initialize(URL arg0, ResourceBundle arg1) {
+
+        genGanttChartBtn.setDisable(true);
+
         TableColumn proColumn = new TableColumn("Process No.");
         TableColumn priColumn = new TableColumn("Priority");
         TableColumn atColumn = new TableColumn("AT");
@@ -261,7 +251,24 @@ public class Controller implements Initializable {
 
     @FXML
     public void genGanttChartAction(ActionEvent e) {
-        String imagePath = "/home/lordy/Pictures/2024-01-02_10-54.png";
+
+        int noOfPro = proDataInputTable.getItems().size();
+        int[] at = new int[noOfPro];
+        int[] bt = new int[noOfPro];
+        int[] pr = new int[noOfPro];
+
+        for (int i = 0; i < noOfPro; i++) {
+            at[i] = Integer.parseInt(proDataInputTable.getItems().get(i).getArrivalTime().getText());
+            bt[i] = Integer.parseInt(proDataInputTable.getItems().get(i).getBurstTime().getText());
+            pr[i] = Integer.parseInt(proDataInputTable.getItems().get(i).getPriority().getText());
+        }
+
+        String imagePath = GanttChartGenerator.generateGanttChart(this.noOfPro,
+                at,
+                bt,
+                pr);
+
+        System.out.println(imagePath);
 
         Image image = new Image(new File(imagePath).toURI().toString());
         ImageView imageView = new ImageView(image);

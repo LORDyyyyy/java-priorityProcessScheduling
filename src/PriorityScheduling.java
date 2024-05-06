@@ -65,8 +65,16 @@ public class PriorityScheduling {
 
     public static ArrayList<Object[]> findgc() {
 
-        Arrays.sort(proc, (a, b) -> {
-            return a.pr - b.pr;
+        Arrays.sort(proc, (obj1, obj2) -> {
+            if (obj1.at > obj2.at)
+                return 1;
+            if (obj1.at < obj2.at)
+                return -1;
+            if (obj1.pr > obj2.pr)
+                return 1;
+            if (obj1.pr < obj2.pr)
+                return -1;
+            return 0;
         });
 
         ArrayList<Object[]> output = new ArrayList<>();
@@ -119,16 +127,6 @@ public class PriorityScheduling {
 
         return output;
     }
-
-    // public static void main(String[] args) {
-    // PriorityScheduling.totalprocess = 5;
-    // initprocess();
-    // int arrivaltime[] = { 0, 1, 2, 3, 5 };
-    // int bursttime[] = { 3, 7, 6, 1, 2 };
-    // int priority[] = { 1, 4, 2, 5, 3 };
-
-    // findgc();
-    // }
 
     class Process {
         int at, bt, pr, pno;
