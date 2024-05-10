@@ -1,149 +1,179 @@
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class NonPriorityScheduling {
-    public static Integer totalprocess;
-    public static Process[] proc;
+    private int n;
+    private int[] arrivalTime;
+    private int[] burstTime;
+    private int[] priority;
 
-    public static void setTotalprocess(Integer num) {
-        totalprocess = num;
+    public NonPriorityScheduling(int[] arrivalTime, int[] burstTime, int[] priority) {
+        this.arrivalTime = arrivalTime;
+        this.burstTime = burstTime;
+        this.priority = priority;
+        this.n = arrivalTime.length;
     }
 
-    public static void initprocess() {
-        proc = new Process[totalprocess];
-    }
+    public int[] calculateCompletionTime() {
+        int[] completionTime = new int[n];
 
-    static Integer[] get_rt_time(Integer stime[]) {
-        Integer rt[] = new Integer[totalprocess];
-        for (Integer i = 0; i < totalprocess; i++) {
-            rt[i] = stime[i] - proc[i].at;
-        }
-        return rt;
-    }
+        int CPU = 0;
+        int allTime = 0;
 
-    static Integer[] get_BT(Integer noOfPro) {
-        Integer bt[] = new Integer[totalprocess];
-        for (Integer i = 0; i < totalprocess; i++) {
-            bt[i] = proc[i].bt;
-        }
-        return bt;
-    }
+        int[] ATt = Arrays.copyOf(arrivalTime, n);
+        int NoP = n;
+        int[] PPt = Arrays.copyOf(priority, n);
 
-    static Integer[] get_AT(Integer noOfPro) {
-        Integer at[] = new Integer[totalprocess];
-        for (Integer i = 0; i < totalprocess; i++) {
-            at[i] = proc[i].at;
-        }
-        return at;
-    }
+        int LAT = Arrays.stream(arrivalTime).max().getAsInt();
+        int MAX_P = Arrays.stream(priority).max().getAsInt();
 
-    static Integer[] get_PR(Integer noOfPro) {
-        Integer pr[] = new Integer[totalprocess];
-        for (Integer i = 0; i < totalprocess; i++) {
-            pr[i] = proc[i].pr;
-        }
-        return pr;
-    }
+        int ATi = 0;
+        int P1 = PPt[0];
+        int P2 = PPt[0];
 
-    static Integer[] convert(Integer[] IntegerArray) {
+        while (NoP > 0 && CPU <= 1000) {
+            int j = -1;
+            for (int i = 0; i < n; i++) {
+                if ((ATt[i] <= CPU) && (ATt[i] != (LAT + 10))) {
+                    if (PPt[i] != (MAX_P + 1)) {
+                        P2 = PPt[i];
+                        j = 1;
 
-        Integer[] IntegeregerArray = new Integer[IntegerArray.length];
-
-        for (Integer i = 0; i < IntegerArray.length; i++) {
-            IntegeregerArray[i] = Integer.valueOf(IntegerArray[i]);
-        }
-        return IntegeregerArray;
-    }
-
-    public static ArrayList<Object[]> calc_wt_rt_tat_st_ct() {
-        ArrayList<Object[]> list = new ArrayList<Object[]>();
-        Integer wt[] = new Integer[totalprocess];
-        Integer tat[] = new Integer[totalprocess];
-        Integer stime[] = new Integer[totalprocess];
-        Integer ct[] = new Integer[totalprocess];
-        Integer bt[] = get_BT(totalprocess);
-        Integer at[] = get_AT(totalprocess);
-        Integer pr[] = get_PR(totalprocess);
-        Integer temp, temp1;
-        Integer totalwt = 0, totaltat = 0;
-        Integer totalct = 0, totalrt = 0;
-
-        double avgwt = 0.0, avgtat = 0.0;
-        double avgrt = 0.0, avgct = 0.0;
-
-        for (Integer i = 0; i < totalprocess; i++) {
-            for (Integer j = i + 1; j < totalprocess; j++) {
-                if (at[i] > at[j]) {
-                    temp = at[i];
-                    temp1 = bt[i];
-                    at[i] = at[j];
-                    bt[i] = bt[j];
-                    at[j] = temp;
-                    bt[j] = temp1;
-                    temp = pr[i];
-                    pr[i] = pr[j];
-                    pr[j] = temp;
-                    temp = i;
-                    i = j;
-                    j = temp;
+                        if (P2 < P1) {
+                            j = 1;
+                            ATi = i;
+                            P1 = PPt[i];
+                            P2 = PPt[i];
+                        }
+                    }
                 }
+            }
+
+            if (j == -1) {
+                CPU = CPU + 1;
+                continue;
+            } else {
+                CPU = CPU + burstTime[ATi];
+                completionTime[ATi] = CPU;
+                ATt[ATi] = LAT + 10;
+                j = -1;
+                PPt[ATi] = MAX_P + 1;
+                ATi = 0;
+                P1 = MAX_P + 1;
+                P2 = MAX_P + 1;
+                NoP = NoP - 1;
             }
         }
 
-        for (Integer i = 0; i < totalprocess; i++) {
-            stime[i] = 0;
-            wt[i] = 0;
-            ct[i] = 0;
-        }
-
-        for (Integer i = 0; i < totalprocess; i++) {
-            stime[i] = i == 0 ? at[i] : ct[i - 1];
-            wt[i] = i == 0 ? 0 : ct[i - 1] - at[i];
-            ct[i] = stime[i] + bt[i];
-            tat[i] = ct[i] - at[i];
-            totalwt += wt[i];
-            totaltat += tat[i];
-            totalct += ct[i];
-        }
-
-        Integer[] rt = get_rt_time(stime);
-
-        for (Integer i = 0; i < totalprocess; i++) {
-            totalrt += rt[i];
-        }
-
-        list.add(stime);
-        list.add(ct);
-        list.add(tat);
-        list.add(wt);
-        list.add(rt);
-        list.add(stime);
-
-        avgwt = totalwt / totalprocess;
-        avgtat = totaltat / totalprocess;
-        avgct = totalct / totalprocess;
-        avgrt = totalrt / totalprocess;
-
-        list.add(new Double[] { avgwt, avgtat, avgct, avgrt });
-
-        for (Integer i = 0; i < totalprocess; i++) {
-            System.out.println(
-                    "P" + (i + 1) + "\t" + at[i] + "\t" + bt[i] + "\t" + stime[i] + "\t" + ct[i] + "\t" + tat[i] + "\t"
-                            + wt[i]);
-        }
-
-        return list;
+        return completionTime;
     }
 
-    class Process {
-        Integer at, bt, pr, pno;
+    public int[] calculateWaitingTime() {
+        int[] waitingTime = new int[n];
+        int[] turnaroundTime = new int[n];
 
-        Process(Integer pno, Integer at, Integer bt, Integer pr) {
-            this.pno = pno;
-            this.pr = pr;
-            this.at = at;
-            this.bt = bt;
+        int CPU = 0;
+        int allTime = 0;
+
+        int[] ATt = Arrays.copyOf(arrivalTime, n);
+        int NoP = n;
+        int[] PPt = Arrays.copyOf(priority, n);
+
+        int LAT = Arrays.stream(arrivalTime).max().getAsInt();
+        int MAX_P = Arrays.stream(priority).max().getAsInt();
+
+        int ATi = 0;
+        int P1 = PPt[0];
+        int P2 = PPt[0];
+
+        while (NoP > 0 && CPU <= 1000) {
+            int j = -1;
+            for (int i = 0; i < n; i++) {
+                if ((ATt[i] <= CPU) && (ATt[i] != (LAT + 10))) {
+                    if (PPt[i] != (MAX_P + 1)) {
+                        P2 = PPt[i];
+                        j = 1;
+
+                        if (P2 < P1) {
+                            j = 1;
+                            ATi = i;
+                            P1 = PPt[i];
+                            P2 = PPt[i];
+                        }
+                    }
+                }
+            }
+
+            if (j == -1) {
+                CPU = CPU + 1;
+                continue;
+            } else {
+                waitingTime[ATi] = CPU - ATt[ATi];
+                CPU = CPU + burstTime[ATi];
+                turnaroundTime[ATi] = CPU - ATt[ATi];
+                ATt[ATi] = LAT + 10;
+                j = -1;
+                PPt[ATi] = MAX_P + 1;
+                ATi = 0;
+                P1 = MAX_P + 1;
+                P2 = MAX_P + 1;
+                NoP = NoP - 1;
+            }
         }
+
+        return waitingTime;
+    }
+
+    public int[] calculateTurnaroundTime() {
+        int[] turnaroundTime = new int[n];
+        int[] waitingTime = calculateWaitingTime();
+        for (int i = 0; i < n; i++) {
+            turnaroundTime[i] = burstTime[i] + waitingTime[i];
+        }
+        return turnaroundTime;
+    }
+
+    public float calculateAverageWaitingTime() {
+        int[] waitingTime = calculateWaitingTime();
+        float avgWT = 0;
+        for (int i = 0; i < n; i++) {
+            avgWT += waitingTime[i];
+        }
+        return avgWT / n;
+    }
+
+    public float calculateAverageTurnaroundTime() {
+        int[] turnaroundTime = calculateTurnaroundTime();
+        float avgTAT = 0;
+        for (int i = 0; i < n; i++) {
+            avgTAT += turnaroundTime[i];
+        }
+        return avgTAT / n;
+    }
+
+    public static void test(String[] args) {
+        int[] arrivaltime = { 0, 1, 3, 4, 5, 6, 10 };
+        int[] bursttime = { 8, 2, 4, 1, 6, 5, 1 };
+        int[] priority = { 3, 4, 4, 5, 2, 6, 1 };
+
+        NonPriorityScheduling scheduler = new NonPriorityScheduling(arrivaltime, bursttime, priority);
+        int[] waitingTime = scheduler.calculateWaitingTime();
+        int[] turnaroundTime = scheduler.calculateTurnaroundTime();
+        int[] CompletionTime = scheduler.calculateCompletionTime();
+
+        float avgWT = scheduler.calculateAverageWaitingTime();
+        float avgTAT = scheduler.calculateAverageTurnaroundTime();
+        float avgRT = scheduler.calculateAverageWaitingTime();
+
+        System.out.println(
+                "\nProcess_Number\tBurst_Time\tPriority\tArrival_Time\tWaiting_Time\tTurnaround_Time\tCompletion_Time\tresponse_Time\n\n");
+        for (int i = 0; i < scheduler.n; i++) {
+            System.out.println("P" + (i + 1) + "\t\t" + bursttime[i] + "\t\t" + priority[i] + "\t\t" + arrivaltime[i]
+                    + "\t\t" + waitingTime[i] + "\t\t" + turnaroundTime[i] + "\t\t" + CompletionTime[i] + "\t\t"
+                    + waitingTime[i]);
+        }
+
+        System.out.println("Average waiting time = " + avgWT);
+        System.out.println("Average turnaround time = " + avgTAT);
+        System.out.println("Average Response time = " + avgRT);
     }
 }

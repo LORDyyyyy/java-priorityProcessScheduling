@@ -18,29 +18,23 @@ def generate_gantt_chart():
     gantt_chart = []
 
     while True:
-        # Find available processes
         available_processes = [(i, burst_times[i], priorities[i]) for i in range(num_processes) if
                                 arrival_times[i] <= current_time and remaining_time[i] > 0]
 
         if not available_processes:
             break
 
-        # Sort available processes by priority
-        available_processes.sort(key=lambda x: (x[2], x[0]))  # Sort by priority, then by arrival time
+        available_processes.sort(key=lambda x: (x[2], x[0]))
 
-        # Select the process with the highest priority
         selected_process = available_processes[0]
         process_index = selected_process[0]
         burst_time = selected_process[1]
 
-        # Update Gantt chart
         gantt_chart.append((current_time, current_time + burst_time, process_index))
 
-        # Update current time and remaining time
         current_time += burst_time
         remaining_time[process_index] = 0
 
-        # Update completion time and turnaround time
         completion_time[process_index] = current_time
         turnaround_time[process_index] = completion_time[process_index] - arrival_times[process_index]
         waiting_time[process_index] = turnaround_time[process_index] - burst_times[process_index]

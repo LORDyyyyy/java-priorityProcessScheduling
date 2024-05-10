@@ -91,31 +91,49 @@ public class Controller implements Initializable {
 
     public void addClaculationTableFields(int noOfPro) {
         final ObservableList<ProcessCalc> data = FXCollections.observableArrayList();
-        NonPriorityScheduling.totalprocess = noOfPro;
-        NonPriorityScheduling.initprocess();
+
+        int[] arrivaltime = new int[noOfPro];
+        int[] bursttime = new int[noOfPro];
+        int[] priority = new int[noOfPro];
 
         for (int i = 0; i < noOfPro; i++) {
-            NonPriorityScheduling.proc[i] = new NonPriorityScheduling().new Process(i + 1,
-                    Integer.parseInt(proDataInputTable.getItems().get(i).getArrivalTime().getText()),
-                    Integer.parseInt(proDataInputTable.getItems().get(i).getBurstTime().getText()),
-                    Integer.parseInt(proDataInputTable.getItems().get(i).getPriority().getText()));
+            arrivaltime[i] = Integer.parseInt(proDataInputTable.getItems().get(i).getArrivalTime().getText());
+            bursttime[i] = Integer.parseInt(proDataInputTable.getItems().get(i).getBurstTime().getText());
+            priority[i] = Integer.parseInt(proDataInputTable.getItems().get(i).getPriority().getText());
         }
 
-        ArrayList<Object[]> results = NonPriorityScheduling.calc_wt_rt_tat_st_ct();
+        NonPriorityScheduling scheduler = new NonPriorityScheduling(arrivaltime, bursttime, priority);
+
+        int[] waitingTime = scheduler.calculateWaitingTime();
+        int[] turnaroundTime = scheduler.calculateTurnaroundTime();
+        float avgWT = scheduler.calculateAverageWaitingTime();
+        float avgTAT = scheduler.calculateAverageTurnaroundTime();
+        float avgRT = scheduler.calculateAverageWaitingTime();
+        int[] CompletionTime = scheduler.calculateCompletionTime();
 
         for (int i = 0; i < noOfPro; i++) {
             data.add(new ProcessCalc(i + 1));
-            data.get(i).setProNo((Integer) results.get(0)[i]);
-            data.get(i).setCt((Integer) results.get(1)[i]);
-            data.get(i).setTat((Integer) results.get(2)[i]);
-            data.get(i).setWt((Integer) results.get(3)[i]);
-            data.get(i).setRt((Integer) results.get(4)[i]);
-            data.get(i).setSt((Integer) results.get(5)[i]);
+            data.get(i).setCt(CompletionTime[i]);
+            data.get(i).setTat(turnaroundTime[i]);
+            data.get(i).setWt(waitingTime[i]);
+            data.get(i).setRt(waitingTime[i]);
+            data.get(i).setSt(arrivaltime[i]);
+            // data.get(i).setProNo((Integer) results.get(0)[i]);
+            // data.get(i).setCt((Integer) results.get(1)[i]);
+            // data.get(i).setTat((Integer) results.get(2)[i]);
+            // data.get(i).setWt((Integer) results.get(3)[i]);
+            // data.get(i).setRt((Integer) results.get(4)[i]);
+            // data.get(i).setSt((Integer) results.get(5)[i]);
         }
 
         outputTable.setItems(data);
 
-        this.addAvgClaculationTableFields(results);
+        this.addAvgClaculationTableFields(
+                new ArrayList<Object[]>() {
+                    {
+                        add(new Object[] { avgWT, avgTAT, avgRT });
+                    }
+                });
 
     }
 
@@ -124,10 +142,10 @@ public class Controller implements Initializable {
         final ObservableList<AvgCalc> data = FXCollections.observableArrayList();
 
         data.add(new AvgCalc());
-        data.get(0).setWt((Double) result.get(6)[0]);
-        data.get(0).setTat((Double) result.get(6)[1]);
-        data.get(0).setCt((Double) result.get(6)[2]);
-        data.get(0).setRt((Double) result.get(6)[3]);
+        data.get(0).setWt((float) result.get(0)[0]);
+        data.get(0).setTat((float) result.get(0)[1]);
+        data.get(0).setCt((float) result.get(0)[2]);
+        data.get(0).setRt((float) result.get(0)[2]);
 
         outputAvgTable.setItems(data);
 

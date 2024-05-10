@@ -23,7 +23,7 @@ public class GanttChartGenerator {
 
             OutputStreamWriter writer = new OutputStreamWriter(process.getOutputStream());
 
-            writer.write((numProcesses + "\n"));
+            writer.write(numProcesses + "\n");
             writer.write(arrayToString(arrivalTimes));
             writer.write(arrayToString(burstTimes));
             writer.write(arrayToString(priorities));
@@ -34,7 +34,6 @@ public class GanttChartGenerator {
             String line;
             String imagePath = null;
             while ((line = reader.readLine()) != null) {
-                System.out.println(line);
                 imagePath = line;
             }
 
