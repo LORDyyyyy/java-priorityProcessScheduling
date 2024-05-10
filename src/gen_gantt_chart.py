@@ -41,10 +41,14 @@ def generate_gantt_chart():
 
     fig, gnt = plt.subplots()
     for i in range(len(gantt_chart)):
+        colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray',
+                    'tab:olive', 'tab:cyan']
         process_index = gantt_chart[i][2]
         gnt.broken_barh([(gantt_chart[i][0], gantt_chart[i][1] - gantt_chart[i][0])], (process_index, 1),
-                        facecolors=('tab:blue'))
+                        facecolors=(colors[process_index % 10]))
     gnt.set_xlabel('Seconds since start')
+    gnt.set_xlim(0, current_time)
+    gnt.set_xticks(range(0, current_time + 1, 3))
     gnt.set_ylabel('Processes number')
     gnt.set_yticks(range(num_processes))
     gnt.set_yticklabels(processes)

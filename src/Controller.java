@@ -118,12 +118,6 @@ public class Controller implements Initializable {
             data.get(i).setWt(waitingTime[i]);
             data.get(i).setRt(waitingTime[i]);
             data.get(i).setSt(arrivaltime[i]);
-            // data.get(i).setProNo((Integer) results.get(0)[i]);
-            // data.get(i).setCt((Integer) results.get(1)[i]);
-            // data.get(i).setTat((Integer) results.get(2)[i]);
-            // data.get(i).setWt((Integer) results.get(3)[i]);
-            // data.get(i).setRt((Integer) results.get(4)[i]);
-            // data.get(i).setSt((Integer) results.get(5)[i]);
         }
 
         outputTable.setItems(data);
@@ -307,6 +301,7 @@ public class Controller implements Initializable {
         outputAvgTable.getItems().clear();
 
         noOfProVal.setText("");
+        this.genGanttChartBtn.setDisable(true);
     }
 
     @FXML
